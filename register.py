@@ -21,16 +21,13 @@ import my_message_pb2
 import warnings
 from urllib3.exceptions import InsecureRequestWarning
 
-# Disable SSL warning
 warnings.filterwarnings("ignore", category=InsecureRequestWarning)
 
-# ====================== CONSTANTS ======================
 AES_KEY = b'Yg&tc%DEuh6%Zc^8'
 AES_IV = b'6oyZDr22E3ychjM%'
 
 app = Flask(__name__)
 
-# ====================== REGION DETECTION (from topup.pk) ======================
 def get_region_from_topup(uid):
     headers = {
         "Accept": "application/json, text/plain, */*",
@@ -47,7 +44,8 @@ def get_region_from_topup(uid):
         "Sec-Fetch-Site": "same-origin",
         "User-Agent": "Mozilla/5.0 (Linux; Android 15; RMX5070 Build/UKQ1.231108.001) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.157 Mobile Safari/537.36",
         "X-Requested-With": "mark.via.gp",
-        "Cookie": "session_key=nc0gnuzm5msiyuxnn5mlwkrxpnizen3p;region=PK;source=mb;...datadome=pZPKg0pAoNyJc3k5Z4tuDnQtvcuZ\\~x86gN9Pm_73GNQQx9nIZC0QZUR3YpRpi31p6mi9nQ\\~NQiuUPrXJ0d1eAzPVRu8QJcF9LcjqTUYBVaHprHeFP2KOg9lnmvd0Q3LZ;language=en;",
+        "Cookie": "session_key=nc0gnuzm5msiyuxnn5mlwkrxpnizen3p;region=PK;source=mb;datadome=pZPKg0pAoNyJc3k5Z4tuDnQtvcuZ\\~x86gN9Pm_73GNQQx9nIZC0QZUR3YpRpi31p6mi9nQ\\~NQiuUPrXJ0d1eAzPVRu8QJcF9LcjqTUYBVaHprHeFP2KOg9lnmvd0Q3LZ;language=en;",
+    }
 
     payload = {
         "app_id": 100067,
@@ -70,7 +68,6 @@ def get_region_from_topup(uid):
         return None
 
 
-# ====================== HELPER FUNCTIONS (unchanged) ======================
 def hex_to_unwieldy(hex_string):
     return bytes.fromhex(hex_string)
 
@@ -263,14 +260,12 @@ def get_jwt_token(region):
         return None
 
 
-# ====================== MAIN ROUTE (CUSTOMISED AS REQUESTED) ======================
 @app.route('/info', methods=['GET'])
 def main():
     uid = request.args.get('uid')
     if not uid:
         return jsonify({"error": "uid required"}), 400
 
-    # Auto-detect region using topup.pk (upper code logic)
     region = get_region_from_topup(uid)
     if not region:
         return jsonify({"error": "Failed to detect region"}), 400
@@ -317,9 +312,6 @@ def main():
 
     result = {}
 
-    # ──────────────────────────────────────────────
-    #          OLD FIELDS (bilkul same rakhe hain)
-    # ──────────────────────────────────────────────
     if account_info.HasField("basic_info"):
         basic_info = account_info.basic_info
         result["basicInfo"] = {
@@ -454,53 +446,6 @@ def main():
             "periodicSummaryEndTime": str(credit_info.periodic_summary_end_time)
         }
 
-    # ──────────────────────────────────────────────
-    #     NEW FIELDS from GetPlayerPersonalShow.proto
-    # ──────────────────────────────────────────────
-    try:
-        if account_info.HasField("basic_info") and hasattr(account_info.basic_info, "username"):
-            result["username"] = account_info.basic_info.username
-        if hasattr(account_info, "username"):
-            result["username"] = account_info.username
-    except:
-        pass
-
-    try:
-        result["matchesPlayed"] = account_info.basic_info.matches_played if hasattr(account_info.basic_info, "matches_played") else None
-        result["totalKills"]     = account_info.basic_info.kills           if hasattr(account_info.basic_info, "kills") else None
-        result["headshotPct"]    = account_info.basic_info.headshot_percentage if hasattr(account_info.basic_info, "headshot_percentage") else None
-        result["skillRating"]    = account_info.basic_info.skill_rating   if hasattr(account_info.basic_info, "skill_rating") else None
-    except:
-        pass
-
-    try:
-        if account_info.HasField("clan_basic_info"):
-            result["clanTag"] = account_info.clan_basic_info.clan_tag if hasattr(account_info.clan_basic_info, "clan_tag") else None
-    except:
-        pass
-
-    try:
-        if account_info.HasField("social_info"):
-            s = account_info.social_info
-            result["socialExtra"] = {
-                "friendsCount": s.friends_count if hasattr(s, "friends_count") else None,
-                "friendRequests": s.friend_requests if hasattr(s, "friend_requests") else None,
-                "maxFriends": s.max_friends if hasattr(s, "max_friends") else None,
-                "blockedCount": s.blocked_count if hasattr(s, "blocked_count") else None,
-            }
-    except:
-        pass
-
-    try:
-        if hasattr(account_info, "equipped"):
-            eq = account_info.equipped
-            result["equippedItems"] = {
-                "slots": [{"slot": slot.slot_type, "item": slot.item_id, "variant": slot.variant} for slot in eq.slots]
-            } if hasattr(eq, "slots") else None
-    except:
-        pass
-
-    # Credits (from upper code + your original credit)
     result['credit'] = '@Ujjaiwal'
     result['credits'] = {
         "developer": "t.me/danger_ff_like",
