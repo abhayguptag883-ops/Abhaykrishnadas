@@ -47,8 +47,7 @@ def get_region_from_topup(uid):
         "Sec-Fetch-Site": "same-origin",
         "User-Agent": "Mozilla/5.0 (Linux; Android 15; RMX5070 Build/UKQ1.231108.001) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.157 Mobile Safari/537.36",
         "X-Requested-With": "mark.via.gp",
-        "Cookie": "session_key=nc0gnuzm5msiyuxnn5mlwkrxpnizen3p;region=PK;source=mb;_fbp=fb.1.1772607670314.265654977791660607;_ga=GA1.1.1968215565.1772607669;_ga_C956TFJLD0=GS2.1.s1772607668$o1$g1$t1772607698$j30$l0$h0;datadome=pZPKg0pAoNyJc3k5Z4tuDnQtvcuZ\~x86gN9Pm_73GNQQx9nIZC0QZUR3YpRpi31p6mi9nQ\~NQiuUPrXJ0d1eAzPVRu8QJcF9LcjqTUYBVaHprHeFP2KOg9lnmvd0Q3LZ;language=en;mspid2=500b9a3b5640bb6a3b753b5f32a65f87",
-    }
+        "Cookie": "session_key=nc0gnuzm5msiyuxnn5mlwkrxpnizen3p;region=PK;source=mb;...datadome=pZPKg0pAoNyJc3k5Z4tuDnQtvcuZ\\~x86gN9Pm_73GNQQx9nIZC0QZUR3YpRpi31p6mi9nQ\\~NQiuUPrXJ0d1eAzPVRu8QJcF9LcjqTUYBVaHprHeFP2KOg9lnmvd0Q3LZ;language=en;",
 
     payload = {
         "app_id": 100067,
