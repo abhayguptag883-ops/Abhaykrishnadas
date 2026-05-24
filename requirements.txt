@@ -2,4 +2,4 @@ flask
 requests
 pycryptodome
 protobuf
-gunicorn
+urllib3
